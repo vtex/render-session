@@ -1,12 +1,13 @@
 {
-  "name": "render-session",
+  "name": "vtex-render-session",
   "version": "0.0.0",
   "description": "Adds session as external to render runtime",
   "scripts": {
     "clean": "rimraf dist",
     "start": "webpack-dev-server --open",
     "watch": "webpack --watch",
-    "build": "npm run clean && webpack --config ./webpack.config.js"
+    "build": "npm run clean && webpack --config ./webpack.config.js",
+    "prereleasy": "npm run build"
   },
   "main": "dist/index.min.js",
   "devDependencies": {
