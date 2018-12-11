@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "typeRoots": ["node_modules/@types"],
+    "allowJs": false,
+    "module": "commonjs",
+    "target": "es5",
+    "importHelpers": true,
+    "strict": true,
+    "noEmitHelpers": false,
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": false,
+    "noEmitOnError": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "lib": [
+      "dom",
+      "es5",
+      "es2015.promise"
+    ]
+  },
+  "typeAcquisition": {
+    "enable": false
+  },
+  "include": ["./typings.d.ts", "./**/*"],
+  "exclude": ["node_modules", "dist"]
+}
