@@ -1,6 +1,6 @@
 {
   "name": "vtex-render-session",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Adds session as external to render runtime",
   "scripts": {
     "clean": "rimraf dist",
