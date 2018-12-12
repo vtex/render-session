@@ -29,9 +29,21 @@ const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 3):
   return callFetch()
 }
 
-(window as any).__RENDER_SESSION_PROMISE__ = fetchWithRetry(`/api/sessions${window.location.search}`, {
-    body: '{}',
-    credentials: 'same-origin',
-    headers: new Headers({ 'Content-Type': 'application/json' }),
-    method: 'POST',
-}).catch(err => console.log('Error while loading session with error: ', err))
+const patchSession = (data?: any) => fetchWithRetry(`/api/sessions${window.location.search}`, {
+  body: data ? JSON.stringify(data) : '{}',
+  credentials: 'same-origin',
+  headers: new Headers({ 'Content-Type': 'application/json' }),
+  method: 'PATCH',
+}).catch(err => console.log('Error while patching session with error: ', err))
+
+const sessionPromise = fetchWithRetry(`/api/sessions${window.location.search}`, {
+  body: '{}',
+  credentials: 'same-origin',
+  headers: new Headers({ 'Content-Type': 'application/json' }),
+  method: 'POST',
+}).catch(err => console.log('Error while loading session with error: ', err));
+
+(window as any).__RENDER_7_SESSION__ = {
+  patchSession,
+  sessionPromise,
+}

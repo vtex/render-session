@@ -2,6 +2,7 @@
 const path = require('path');
 
 const mode = 'production';
+// const mode = 'development';
 
 module.exports = {
   entry: {
@@ -49,5 +50,5 @@ module.exports = {
     },
   },
 
-  devtool: 'inline-source-map',
+  devtool: mode === "production" ? undefined: 'inline-source-map',
 };
