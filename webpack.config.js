@@ -1,10 +1,7 @@
 'use strict';
 const path = require('path');
 
-const mode = 'production';
-// const mode = 'development';
-
-module.exports = {
+module.exports = (env, {mode}) => ({
   entry: {
     'render-session': ['index.ts'],
   },
@@ -51,4 +48,4 @@ module.exports = {
   },
 
   devtool: mode === "production" ? undefined: 'inline-source-map',
-};
+});
