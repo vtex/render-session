@@ -6,7 +6,7 @@
     "clean": "rimraf dist",
     "start": "webpack-dev-server --open",
     "watch": "webpack --watch",
-    "build": "npm run clean && webpack --config ./webpack.config.js",
+    "build": "webpack --config ./webpack.config.js",
     "prereleasy": "npm run build",
     "postreleasy": "npm publish"
   },
