@@ -7,7 +7,7 @@
     "start": "webpack-dev-server --open",
     "watch": "webpack --watch",
     "build": "npm run clean && webpack --config ./webpack.config.js",
-    "prereleasy": "npm run build"
+    "prereleasy": "npm run build && npm publish"
   },
   "main": "dist/index.min.js",
   "devDependencies": {
