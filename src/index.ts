@@ -12,7 +12,7 @@ const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 3):
           .catch(() => ({ response, error: { message: 'Unable to parse JSON' } }))
     }).then(({ error }: any) => {
       if (error) {
-        throw Error(error)
+        throw Error(error.message)
       }
     }).catch((error) => {
       console.error(error)
