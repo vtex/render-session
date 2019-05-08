@@ -48,7 +48,11 @@ const patchSession = (data?: any) => fetchWithRetry(`/api/sessions${window.locat
   method: 'PATCH',
 }).catch(err => console.log('Error while patching session with error: ', err))
 
-const sessionPromise = fetchWithRetry(`/api/sessions${window.location.search}${supportedLocales.length > 0 ? `?supportedLocales=${supportedLocales.join(',')}` : ''}`, {
+const supportedLocalesSearch = supportedLocales.length > 0
+  ? `${window.location.search ? '&' : '?'}supportedLocales=${supportedLocales.join(',')}`
+  : ''
+
+const sessionPromise = fetchWithRetry(`/api/sessions${window.location.search}${supportedLocalesSearch}`, {
   body: '{}',
   credentials: 'same-origin',
   headers: new Headers({ 'Content-Type': 'application/json' }),
