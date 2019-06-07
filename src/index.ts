@@ -8,11 +8,13 @@ declare global {
       culture: {
         availableLocales: string[]
       }
+      rootPath?: string
     }
   }
 }
 
 const supportedLocales = window.__RUNTIME__ && window.__RUNTIME__.culture && window.__RUNTIME__.culture.availableLocales || []
+const rootPath = window.__RUNTIME__ && window.__RUNTIME__.rootPath
 
 const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 3): Promise<void> => {
   const callFetch = (attempt: number = 0): Promise<void> =>
@@ -52,7 +54,9 @@ const supportedLocalesSearch = supportedLocales.length > 0
   ? `${window.location.search ? '&' : '?'}supportedLocales=${supportedLocales.join(',')}`
   : ''
 
-const sessionPromise = fetchWithRetry(`/api/sessions${window.location.search}${supportedLocalesSearch}`, {
+const rootPathPrefix = rootPath ? rootPath : ''
+
+const sessionPromise = fetchWithRetry(`${rootPathPrefix}/api/sessions${window.location.search}${supportedLocalesSearch}`, {
   body: '{}',
   credentials: 'same-origin',
   headers: new Headers({ 'Content-Type': 'application/json' }),
