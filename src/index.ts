@@ -16,10 +16,18 @@ declare global {
 const supportedLocales = window.__RUNTIME__ && window.__RUNTIME__.culture && window.__RUNTIME__.culture.availableLocales || []
 const rootPath = window.__RUNTIME__ && window.__RUNTIME__.rootPath || ''
 
+const RETRY_STATUSES = [ 408, 425, 429, 500,  501,  502,  503,  504,  505,  506,  507,  508,  510,  511 ]
+
+const canRetry = (status: number) => RETRY_STATUSES.includes(status)
+
+const ok = (status: number) => 200 <= status && status < 300
+
 const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 3): Promise<void> => {
+  let status = 500
   const callFetch = (attempt: number = 0): Promise<void> =>
     fetch(url, init).then((response) => {
-      return response.status >= 200 && response.status < 300
+      status = response.status
+      return ok(status)
         ? { response, error: null }
         : response.json()
           .then((error) => ({ response, error }))
@@ -31,7 +39,7 @@ const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 3):
     }).catch((error) => {
       console.error(error)
 
-      if (attempt >= maxRetries) {
+      if (attempt >= maxRetries || !canRetry(status)) {
         return // no session is fine for now
       }
 
