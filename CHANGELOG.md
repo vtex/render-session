@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.2.1] - 2019-06-13
+### Fixed
+- Retry only on retriable status code, i.e. 5xx and some 4xx
+
 ## [1.2.0] - 2019-06-07
 
 ## [1.1.2] - 2019-05-08
