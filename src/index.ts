@@ -68,7 +68,7 @@ const sessionPromise = fetchWithRetry(`${rootPath}/api/sessions${window.location
   method: 'POST',
 }).catch(err => console.log('Error while loading session with error: ', err));
 
-(window as any).__RENDER_8_SESSION__ = {
+(window as any).__RENDER_7_SESSION__ = (window as any).__RENDER_8_SESSION__ = {
   patchSession,
   sessionPromise,
 }
