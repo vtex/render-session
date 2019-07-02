@@ -8,13 +8,12 @@ declare global {
       culture: {
         availableLocales: string[]
       }
-      rootPath?: string
     }
   }
 }
 
 const supportedLocales = window.__RUNTIME__ && window.__RUNTIME__.culture && window.__RUNTIME__.culture.availableLocales || []
-const rootPath = window.__RUNTIME__ && window.__RUNTIME__.rootPath || ''
+const rootPath = document.baseURI || window.location.origin || '/'
 
 const RETRY_STATUSES = [ 408, 425, 429, 500,  501,  502,  503,  504,  505,  506,  507,  508,  510,  511 ]
 
