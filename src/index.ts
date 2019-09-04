@@ -51,7 +51,7 @@ const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 3):
   return callFetch()
 }
 
-const patchSession = (data?: any) => fetchWithRetry(`${rootPath}/api/sessions${window.location.search}`, {
+const patchSession = (data?: any) => fetchWithRetry(`localhost:3000`, {
   body: data ? JSON.stringify(data) : '{}',
   credentials: 'same-origin',
   headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -62,7 +62,7 @@ const supportedLocalesSearch = supportedLocales.length > 0
   ? `${window.location.search ? '&' : '?'}supportedLocales=${supportedLocales.join(',')}`
   : ''
 
-const sessionPromise = fetchWithRetry(`${rootPath}/api/sessions${window.location.search}${supportedLocalesSearch}`, {
+const sessionPromise = fetchWithRetry(`localhost:3000`, {
   body: '{}',
   credentials: 'same-origin',
   headers: new Headers({ 'Content-Type': 'application/json' }),
