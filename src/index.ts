@@ -13,7 +13,6 @@ declare global {
   }
 }
 
-const supportedLocales = window.__RUNTIME__ && window.__RUNTIME__.culture && window.__RUNTIME__.culture.availableLocales || []
 const rootPath = window.__RUNTIME__ && window.__RUNTIME__.rootPath || ''
 
 const RETRY_STATUSES = [ 408, 425, 429, 500,  501,  502,  503,  504,  505,  506,  507,  508,  510,  511 ]
@@ -57,10 +56,6 @@ const patchSession = (data?: any) => fetchWithRetry(`localhost:3000`, {
   headers: new Headers({ 'Content-Type': 'application/json' }),
   method: 'PATCH',
 }).catch(err => console.log('Error while patching session with error: ', err))
-
-const supportedLocalesSearch = supportedLocales.length > 0
-  ? `${window.location.search ? '&' : '?'}supportedLocales=${supportedLocales.join(',')}`
-  : ''
 
 const sessionPromise = fetchWithRetry(`localhost:3000`, {
   body: '{}',
