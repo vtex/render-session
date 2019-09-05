@@ -23,36 +23,43 @@ const ok = (status: number) => 200 <= status && status < 300
 const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 1): Promise<void> => {
   let status = 500
   let didTimeOut = false
-  const callFetch = (attempt: number = 0): Promise<void> => {
-    const timeout = setTimeout(() => {
+  const callFetch = (attempt: number = 0): Promise<void> =>
+    new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
         didTimeOut = true
         throw new Error('Fetch timed out')
       }, FETCH_TIMEOUT)
-    return fetch(url, init).then((response) => {
-      clearTimeout(timeout)
-      status = response.status
+      fetch(url, init).then((response) => {
+        clearTimeout(timeout)
+        if (!didTimeOut) {
+          resolve(response)
+        }}).catch((err) => {
+          console.log('Fetch failed!')
+          if (didTimeOut) {
+            return
+          }
+          reject(err)
+        })
+    }).then((response) => {
+      status = (response as any).status
       return ok(status)
         ? { response, error: null }
-        : response.json()
-          .then((error) => ({ response, error }))
-          .catch(() => ({ response, error: { message: 'Unable to parse JSON' } }))
+        : (response as any).json()
+        .then((error: any) => ({ response, error }))
+        .catch(() => ({ response, error: { message: 'Unable to parse JSON' } }))
     }).then(({ error }: any) => {
       if (error) {
         throw new Error(error.message || 'Unknown error')
       }
     }).catch((error) => {
       console.error(error)
-
       if (attempt >= maxRetries || !canRetry(status) || didTimeOut) {
         return // no session is fine for now
       }
-      console.log('Retrying....... ;)')
-
       const ms = (2 ** attempt) * 500
       return delay(ms)
         .then(() => callFetch(++attempt))
     })
-  }
 
   return callFetch()
 }
