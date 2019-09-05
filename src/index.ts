@@ -48,14 +48,14 @@ const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 3):
   return callFetch()
 }
 
-const patchSession = (data?: any) => fetchWithRetry(`localhost:3000`, {
+const patchSession = (data?: any) => fetchWithRetry(`http://localhost:3000`, {
   body: data ? JSON.stringify(data) : '{}',
   credentials: 'same-origin',
   headers: new Headers({ 'Content-Type': 'application/json' }),
   method: 'PATCH',
 }).catch(err => console.log('Error while patching session with error: ', err))
 
-const sessionPromise = fetchWithRetry(`localhost:3000`, {
+const sessionPromise = fetchWithRetry(`http://localhost:3000`, {
   body: '{}',
   credentials: 'same-origin',
   headers: new Headers({ 'Content-Type': 'application/json' }),
