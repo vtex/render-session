@@ -23,6 +23,7 @@ const ok = (status: number) => 200 <= status && status < 300
 const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 1): Promise<void> => {
   let status = 500
   let didTimeOut = false
+  console.log('init is  ' + JSON.stringify(init, null, 2))
   const callFetch = (attempt: number = 0): Promise<void> =>
     new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
