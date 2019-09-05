@@ -14,15 +14,22 @@ declare global {
 }
 
 const RETRY_STATUSES = [ 408, 425, 429, 500,  501,  502,  503,  504,  505,  506,  507,  508,  510,  511 ]
+const FETCH_TIMEOUT = 3000
 
 const canRetry = (status: number) => RETRY_STATUSES.includes(status)
 
 const ok = (status: number) => 200 <= status && status < 300
 
-const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 3): Promise<void> => {
+const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 1): Promise<void> => {
   let status = 500
-  const callFetch = (attempt: number = 0): Promise<void> =>
-    fetch(url, init).then((response) => {
+  let didTimeOut = false
+  const callFetch = (attempt: number = 0): Promise<void> => {
+    const timeout = setTimeout(() => {
+        didTimeOut = true
+        throw new Error('Fetch timed out')
+      }, FETCH_TIMEOUT)
+    return fetch(url, init).then((response) => {
+      clearTimeout(timeout)
       status = response.status
       return ok(status)
         ? { response, error: null }
@@ -36,14 +43,16 @@ const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 3):
     }).catch((error) => {
       console.error(error)
 
-      if (attempt >= maxRetries || !canRetry(status)) {
+      if (attempt >= maxRetries || !canRetry(status) || didTimeOut) {
         return // no session is fine for now
       }
+      console.log('Retrying....... ;)')
 
       const ms = (2 ** attempt) * 500
       return delay(ms)
         .then(() => callFetch(++attempt))
     })
+  }
 
   return callFetch()
 }
