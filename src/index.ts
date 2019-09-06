@@ -56,8 +56,10 @@ const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 1):
       }
     }).catch((error) => {
       console.error(error)
+      console.error('just printed an error')
 
       if (attempt >= maxRetries || !canRetry(status) || didTimeOut) {
+        console.log('returning undefined session promise')
         return // no session is fine for now
       }
 
