@@ -16,7 +16,7 @@ declare global {
 const supportedLocales = window.__RUNTIME__ && window.__RUNTIME__.culture && window.__RUNTIME__.culture.availableLocales || []
 const rootPath = window.__RUNTIME__ && window.__RUNTIME__.rootPath || ''
 const RETRY_STATUSES = [ 408, 425, 429, 500,  501,  502,  503,  504,  505,  506,  507,  508,  510,  511 ]
-const FETCH_TIMEOUT = 30000
+const FETCH_TIMEOUT = 5000
 
 const canRetry = (status: number) => RETRY_STATUSES.includes(status)
 
