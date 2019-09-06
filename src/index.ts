@@ -14,7 +14,7 @@ declare global {
 }
 
 const RETRY_STATUSES = [ 408, 425, 429, 500,  501,  502,  503,  504,  505,  506,  507,  508,  510,  511 ]
-const FETCH_TIMEOUT = 3000
+const FETCH_TIMEOUT = 30000
 
 const canRetry = (status: number) => RETRY_STATUSES.includes(status)
 
