@@ -13,6 +13,8 @@ declare global {
   }
 }
 
+const supportedLocales = window.__RUNTIME__ && window.__RUNTIME__.culture && window.__RUNTIME__.culture.availableLocales || []
+const rootPath = window.__RUNTIME__ && window.__RUNTIME__.rootPath || ''
 const RETRY_STATUSES = [ 408, 425, 429, 500,  501,  502,  503,  504,  505,  506,  507,  508,  510,  511 ]
 const FETCH_TIMEOUT = 30000
 
@@ -54,9 +56,11 @@ const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 1):
       }
     }).catch((error) => {
       console.error(error)
+
       if (attempt >= maxRetries || !canRetry(status) || didTimeOut) {
         return // no session is fine for now
       }
+
       const ms = (2 ** attempt) * 500
       return delay(ms)
         .then(() => callFetch(++attempt))
@@ -65,14 +69,18 @@ const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 1):
   return callFetch()
 }
 
-const patchSession = (data?: any) => fetchWithRetry(`http://localhost:3000`, {
+const patchSession = (data?: any) => fetchWithRetry(`${rootPath}/api/sessions${window.location.search}`, {
   body: data ? JSON.stringify(data) : '{}',
   credentials: 'same-origin',
   headers: new Headers({ 'Content-Type': 'application/json' }),
   method: 'PATCH',
 }).catch(err => console.log('Error while patching session with error: ', err))
 
-const sessionPromise = fetchWithRetry(`http://localhost:3000`, {
+const supportedLocalesSearch = supportedLocales.length > 0
+  ? `${window.location.search ? '&' : '?'}supportedLocales=${supportedLocales.join(',')}`
+  : ''
+
+const sessionPromise = fetchWithRetry(`${rootPath}/api/sessions${window.location.search}${supportedLocalesSearch}`, {
   body: '{}',
   credentials: 'same-origin',
   headers: new Headers({ 'Content-Type': 'application/json' }),
