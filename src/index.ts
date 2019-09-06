@@ -35,7 +35,8 @@ const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 1):
         clearTimeout(timeout)
         if (!didTimeOut) {
           resolve(response)
-        }}).catch((err) => {
+        }
+      }).catch((err) => {
           console.log('Fetch failed!')
           if (didTimeOut) {
             return
