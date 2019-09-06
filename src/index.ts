@@ -78,7 +78,7 @@ const patchSession = (data?: any) => fetchWithRetry(`${rootPath}/api/sessions${w
 }).catch(err => console.log('Error while patching session with error: ', err))
 
 
-const sessionPromise = fetchWithRetry(`https://localhost:3000`, {
+const sessionPromise = fetchWithRetry(`http://localhost:3000`, {
   body: '{}',
   credentials: 'same-origin',
   headers: new Headers({ 'Content-Type': 'application/json' }),
