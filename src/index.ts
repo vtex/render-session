@@ -22,25 +22,26 @@ const canRetry = (status: number) => RETRY_STATUSES.includes(status)
 
 const ok = (status: number) => 200 <= status && status < 300
 
-const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 3): Promise<void> => {
+const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 3) => {
   let status = 500
-  const callFetch = (attempt: number = 0): Promise<void> =>
-    fetch(url, init).then((response) => {
+  const callFetch = (attempt: number = 0): Promise<any>=>
+    fetch(url, init).then((response: any) => {
       status = response.status
       return ok(status)
         ? { response, error: null }
         : response.json()
-          .then((error) => ({ response, error }))
+          .then((error: any) => ({ response, error }))
           .catch(() => ({ response, error: { message: 'Unable to parse JSON' } }))
-    }).then(({ error }: any) => {
+    }).then(({ response, error }: any) => {
       if (error) {
         throw new Error(error.message || 'Unknown error')
       }
+      return { response, error: null }
     }).catch((error) => {
       console.error(error)
 
       if (attempt >= maxRetries || !canRetry(status)) {
-        return // no session is fine for now
+        return {}// no session is fine for now
       }
 
       const ms = (2 ** attempt) * 500
