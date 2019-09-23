@@ -1,3 +1,5 @@
+import { ITEMS } from './constants'
+
 const delay = (ms: number): Promise<void> => {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
@@ -20,23 +22,14 @@ const RETRY_STATUSES = [ 408, 425, 429, 500,  501,  502,  503,  504,  505,  506,
 
 const canRetry = (status: number) => RETRY_STATUSES.includes(status)
 
-const ok = (status: number) => 200 <= status && status < 300
-
 const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 3) => {
   let status = 500
   const callFetch = (attempt: number = 0): Promise<any>=>
     fetch(url, init).then((response: any) => {
       status = response.status
-      return ok(status)
-        ? { response, error: null }
-        : response.json()
-          .then((error: any) => ({ response, error }))
-          .catch(() => ({ response, error: { message: 'Unable to parse JSON' } }))
-    }).then(({ response, error }: any) => {
-      if (error) {
-        throw new Error(error.message || 'Unknown error')
-      }
-      return { response, error: null }
+      return response.json()
+        .then((data: any) => ({response: data, error: null}))
+        .catch((error: any) => ({response, error}))
     }).catch((error) => {
       console.error(error)
 
@@ -59,11 +52,16 @@ const patchSession = (data?: any) => fetchWithRetry(`${rootPath}/api/sessions${w
   method: 'PATCH',
 }).catch(err => console.log('Error while patching session with error: ', err))
 
+const items = `${window.location.search ? '&' : '?'}items=${ITEMS.join(',')}`
+
 const supportedLocalesSearch = supportedLocales.length > 0
-  ? `${window.location.search ? '&' : '?'}supportedLocales=${supportedLocales.join(',')}`
+  ? `&supportedLocales=${supportedLocales.join(',')}`
   : ''
 
-const sessionPromise = fetchWithRetry(`${rootPath}/api/sessions${window.location.search}${supportedLocalesSearch}`, {
+const b = `${rootPath}/api/sessions${window.location.search}${items}${supportedLocalesSearch}`
+console.log('URL', b)
+
+const sessionPromise = fetchWithRetry(`${rootPath}/api/sessions${window.location.search}${items}${supportedLocalesSearch}`, {
   body: '{}',
   credentials: 'same-origin',
   headers: new Headers({ 'Content-Type': 'application/json' }),
