@@ -34,7 +34,7 @@ const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 3) 
       console.error(error)
 
       if (attempt >= maxRetries || !canRetry(status)) {
-        return {}// no session is fine for now
+        return {response: null, error: {message: 'Maximum number of attempts achieved'}}
       }
 
       const ms = (2 ** attempt) * 500
