@@ -1,5 +1,10 @@
 import { ITEMS } from './constants'
 
+interface SessionResponse {
+  response: Response | null,
+  error: any,
+}
+
 const delay = (ms: number): Promise<void> => {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
@@ -24,8 +29,8 @@ const canRetry = (status: number) => RETRY_STATUSES.includes(status)
 
 const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 3) => {
   let status = 500
-  const callFetch = (attempt: number = 0): Promise<any>=>
-    fetch(url, init).then((response: any) => {
+  const callFetch = (attempt: number = 0): Promise<SessionResponse>=>
+    fetch(url, init).then((response: Response) => {
       status = response.status
       return response.json()
         .then((data: any) => ({response: data, error: null}))
@@ -33,7 +38,7 @@ const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 3) 
       console.error(error)
 
       if (attempt >= maxRetries || !canRetry(status)) {
-        return {response: null, error: {message: 'Maximum number of attempts achieved'}}
+        return {response: null, error: {message: 'Maximum number of attempts achieved'}} as SessionResponse
       }
 
       const ms = (2 ** attempt) * 500
