@@ -29,7 +29,6 @@ const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 3) 
       status = response.status
       return response.json()
         .then((data: any) => ({response: data, error: null}))
-        .catch((error: any) => ({response, error}))
     }).catch((error) => {
       console.error(error)
 
@@ -57,9 +56,6 @@ const items = `${window.location.search ? '&' : '?'}items=${ITEMS.join(',')}`
 const supportedLocalesSearch = supportedLocales.length > 0
   ? `&supportedLocales=${supportedLocales.join(',')}`
   : ''
-
-const b = `${rootPath}/api/sessions${window.location.search}${items}${supportedLocalesSearch}`
-console.log('URL', b)
 
 const sessionPromise = fetchWithRetry(`${rootPath}/api/sessions${window.location.search}${items}${supportedLocalesSearch}`, {
   body: '{}',
