@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.5.0] - 2019-09-25
+### Changed
+- Add more fields to constants.ts, to get more fields from session.
+
 ## [1.4.1] - 2019-09-24
 
 ## [1.4.0] - 2019-07-11
