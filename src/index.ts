@@ -24,21 +24,40 @@ const supportedLocales = window.__RUNTIME__ && window.__RUNTIME__.culture && win
 const rootPath = window.__RUNTIME__ && window.__RUNTIME__.rootPath || ''
 
 const RETRY_STATUSES = [ 408, 425, 429, 500,  501,  502,  503,  504,  505,  506,  507,  508,  510,  511 ]
+const FETCH_TIMEOUT = 7000
 
 const canRetry = (status: number) => RETRY_STATUSES.includes(status)
 
 const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 3) => {
   let status = 500
-  const callFetch = (attempt: number = 0): Promise<SessionResponse>=>
-    fetch(url, init).then((response: Response) => {
+  let didTimeout = false
+  const callFetch = (attempt: number = 0): Promise<SessionResponse> =>
+    new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        didTimeout = true
+        reject(new Error('Fetch timed out'))
+      }, FETCH_TIMEOUT)
+      fetch(url, init).then(response => {
+        clearTimeout(timeout)
+        if (!didTimeout) {
+          resolve(response)
+        }
+      }).catch(err =>  {
+        clearTimeout(timeout)
+        if (didTimeout) {
+          return
+        }
+        reject(err)
+      })
+    }).then((response: any) => {
       status = response.status
       return response.json()
         .then((data: any) => ({response: data, error: null}))
     }).catch((error) => {
       console.error(error)
 
-      if (attempt >= maxRetries || !canRetry(status)) {
-        return {response: null, error: {message: 'Maximum number of attempts achieved'}} as SessionResponse
+      if (attempt >= maxRetries || !canRetry(status) || didTimeout) {
+        return {response: null, error: {message: 'Maximum number of attempts achieved or request timed out'}} as SessionResponse
       }
 
       const ms = (2 ** attempt) * 500
