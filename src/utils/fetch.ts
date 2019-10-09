@@ -1,4 +1,4 @@
-interface SessionResponse {
+export interface SessionResponse {
   response: Response | null,
   error: any,
 }

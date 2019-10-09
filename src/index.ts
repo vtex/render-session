@@ -1,6 +1,10 @@
 import setIOWindow from './io'
+import setPortalWindow from './portal'
+import { Session } from './session'
+import { SessionResponse } from './utils/fetch'
 declare global {
   interface Window {
+    // IOWindow
     __RUNTIME__: {
       culture: {
         availableLocales: string[]
@@ -8,14 +12,19 @@ declare global {
       rootPath?: string
     },
     __RENDER_7_SESSION__: {
-      patchSession: any, 
-      sessionPromise: any,
+      patchSession: (data?: any) => Promise<void | SessionResponse>, 
+      sessionPromise: Promise<void | SessionResponse>,
     },
     __RENDER_8_SESSION__: {
-      patchSession: any, 
-      sessionPromise: any,
+      patchSession: (data?: any) => Promise<void | SessionResponse>, 
+      sessionPromise: Promise<void | SessionResponse>,
+    }
+    // Portal
+    vtexjs: {
+      session: Session
     }
   }
 }
 
 setIOWindow()
+setPortalWindow()
