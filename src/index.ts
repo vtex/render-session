@@ -30,5 +30,8 @@ declare global {
   }
 }
 
-setIOWindow()
-setPortalWindow()
+if (window.__RUNTIME__) {
+  setIOWindow()
+} else {
+  setPortalWindow()
+}
