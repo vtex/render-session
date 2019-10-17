@@ -1,4 +1,4 @@
-import { IMPERSONATED_KEY, Session, } from './session'
+import { IMPERSONATED_KEY, Session } from './session'
 import { deleteCookie, setCookie } from './utils/cookie'
 
 class PortalSession extends Session {
@@ -36,7 +36,7 @@ export default () => {
 
   document.addEventListener('DOMContentLoaded', () => {
     window.vtexjs.session.setSession().then(() => window.dispatchEvent(new Event('session.done')))
-    document.addEventListener('authenticatedUse.vtexis', () => {
+    document.addEventListener('authenticatedUser.vtexid', () => {
       window.vtexjs.session.setSession().then(() => window.dispatchEvent(new Event('session.done')))
     })
   })
