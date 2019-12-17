@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.7.0] - 2019-12-17
+### Added
+- New public fields to get utm and utmi params from session.
+
 ## [1.6.0] - 2019-09-25
 
 ## [1.5.0] - 2019-09-25

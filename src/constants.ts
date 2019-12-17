@@ -19,5 +19,11 @@ export const ITEMS = [
   "profile.isAuthenticated",
   "profile.lastName",
   "profile.phone",
-  "public.favoritePickup"
+  "public.favoritePickup",
+  "public.utm_source",
+  "public.utm_medium",
+  "public.utm_campaign",
+  "public.utmi_cp",
+  "public.utmi_p",
+  "public.utmi_pc",
 ];
