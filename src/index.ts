@@ -12,6 +12,9 @@ const delay = (ms: number): Promise<void> => {
 declare global {
   interface Window {
     __RUNTIME__: {
+      binding?: {
+        id: string
+      }
       culture: {
         availableLocales: string[]
       }
@@ -20,6 +23,7 @@ declare global {
   }
 }
 
+const bindingId = window.__RUNTIME__ && window.__RUNTIME__.binding && window.__RUNTIME__.binding.id
 const supportedLocales = window.__RUNTIME__ && window.__RUNTIME__.culture && window.__RUNTIME__.culture.availableLocales || []
 const rootPath = window.__RUNTIME__ && window.__RUNTIME__.rootPath || ''
 
@@ -81,7 +85,11 @@ const supportedLocalesSearch = supportedLocales.length > 0
   ? `&supportedLocales=${supportedLocales.join(',')}`
   : ''
 
-const sessionPromise = fetchWithRetry(`${rootPath}/api/sessions${window.location.search}${items}${supportedLocalesSearch}`, {
+const bindingIdSearch = bindingId
+  ? `&__bindingId=${bindingId}`
+  : ''
+
+const sessionPromise = fetchWithRetry(`${rootPath}/api/sessions${window.location.search}${items}${supportedLocalesSearch}${bindingIdSearch}`, {
   body: '{}',
   credentials: 'same-origin',
   headers: new Headers({ 'Content-Type': 'application/json' }),
