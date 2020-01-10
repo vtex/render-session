@@ -30,7 +30,7 @@ class PortalSession extends Session {
 }
 
 export default () => {
-  const HOST_URL = window.location.href
+  const HOST_URL = window.location.origin
   window.vtexjs = window.vtexjs || {}
   window.vtexjs.session = new PortalSession(HOST_URL)
 
