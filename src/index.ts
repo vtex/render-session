@@ -14,7 +14,8 @@ declare global {
     __RUNTIME__: {
       binding?: {
         id: string
-      }
+      },
+      bindingChanged?: boolean,
       culture: {
         availableLocales: string[]
       }
@@ -23,6 +24,7 @@ declare global {
   }
 }
 
+const bindingChanged = window.__RUNTIME__ && window.__RUNTIME__.bindingChanged
 const bindingId = window.__RUNTIME__ && window.__RUNTIME__.binding && window.__RUNTIME__.binding.id
 const supportedLocales = window.__RUNTIME__ && window.__RUNTIME__.culture && window.__RUNTIME__.culture.availableLocales || []
 const rootPath = window.__RUNTIME__ && window.__RUNTIME__.rootPath || ''
@@ -89,12 +91,24 @@ const bindingIdSearch = bindingId
   ? `&__bindingId=${bindingId}`
   : ''
 
-const sessionPromise = fetchWithRetry(`${rootPath}/api/sessions${window.location.search}${items}${supportedLocalesSearch}${bindingIdSearch}`, {
-  body: '{}',
-  credentials: 'same-origin',
-  headers: new Headers({ 'Content-Type': 'application/json' }),
-  method: 'POST',
-}).catch(err => console.log('Error while loading session with error: ', err));
+const createSessionRequest = (withCookies: boolean) => {
+  return fetchWithRetry(`${rootPath}/api/sessions${window.location.search}${items}${supportedLocalesSearch}${bindingIdSearch}`, {
+    body: '{}',
+    credentials: withCookies ? 'same-origin' : 'omit',
+    headers: new Headers({ 'Content-Type': 'application/json' }),
+    method: 'POST',
+  })
+}
+
+let sessionPromise: Promise<void | SessionResponse>
+if (bindingChanged) {
+  sessionPromise = createSessionRequest(false)
+    .then(() => createSessionRequest(true))
+    .catch(err => console.log('Error while loading session with error: ', err));
+} else {
+  sessionPromise = createSessionRequest(true)
+    .catch(err => console.log('Error while loading session with error: ', err));
+}
 
 (window as any).__RENDER_7_SESSION__ = (window as any).__RENDER_8_SESSION__ = {
   patchSession,
