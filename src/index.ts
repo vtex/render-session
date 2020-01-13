@@ -12,6 +12,10 @@ const delay = (ms: number): Promise<void> => {
 declare global {
   interface Window {
     __RUNTIME__: {
+      binding?: {
+        id: string
+      },
+      bindingChanged?: boolean,
       culture: {
         availableLocales: string[]
       }
@@ -20,6 +24,8 @@ declare global {
   }
 }
 
+const bindingChanged = window.__RUNTIME__ && window.__RUNTIME__.bindingChanged
+const bindingId = window.__RUNTIME__ && window.__RUNTIME__.binding && window.__RUNTIME__.binding.id
 const supportedLocales = window.__RUNTIME__ && window.__RUNTIME__.culture && window.__RUNTIME__.culture.availableLocales || []
 const rootPath = window.__RUNTIME__ && window.__RUNTIME__.rootPath || ''
 
@@ -81,12 +87,38 @@ const supportedLocalesSearch = supportedLocales.length > 0
   ? `&supportedLocales=${supportedLocales.join(',')}`
   : ''
 
-const sessionPromise = fetchWithRetry(`${rootPath}/api/sessions${window.location.search}${items}${supportedLocalesSearch}`, {
-  body: '{}',
-  credentials: 'same-origin',
-  headers: new Headers({ 'Content-Type': 'application/json' }),
-  method: 'POST',
-}).catch(err => console.log('Error while loading session with error: ', err));
+const bindingIdSearch = bindingId
+  ? `&__bindingId=${bindingId}`
+  : ''
+
+const createInitialSessionRequest = () => {
+  return fetchWithRetry(`${rootPath}/api/sessions${window.location.search}${items}${supportedLocalesSearch}${bindingIdSearch}`, {
+    body: '{}',
+    credentials: 'same-origin',
+    headers: new Headers({ 'Content-Type': 'application/json' }),
+    method: 'POST',
+  })
+}
+
+const clearSession = () => {
+  return fetchWithRetry(`${rootPath}/api/sessions/invalidToken?items=*`, {
+    credentials: 'same-origin',
+    headers: new Headers({ 'Content-Type': 'application/json' }),
+    method: 'GET',
+  }, 1)
+}
+
+const onError = (err: any) => console.log('Error while loading session with error: ', err)
+
+let sessionPromise: Promise<void | SessionResponse>
+if (bindingChanged) {
+  sessionPromise = clearSession()
+    .then(createInitialSessionRequest)
+    .catch(onError);
+} else {
+  sessionPromise = createInitialSessionRequest()
+    .catch(onError);
+}
 
 (window as any).__RENDER_7_SESSION__ = (window as any).__RENDER_8_SESSION__ = {
   patchSession,
