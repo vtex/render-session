@@ -91,23 +91,31 @@ const bindingIdSearch = bindingId
   ? `&__bindingId=${bindingId}`
   : ''
 
-const createSessionRequest = (withCookies: boolean) => {
+const createInitialSessionRequest = () => {
   return fetchWithRetry(`${rootPath}/api/sessions${window.location.search}${items}${supportedLocalesSearch}${bindingIdSearch}`, {
     body: '{}',
-    credentials: withCookies ? 'same-origin' : 'omit',
+    credentials: 'same-origin',
     headers: new Headers({ 'Content-Type': 'application/json' }),
     method: 'POST',
   })
 }
 
+const clearSession = () => {
+  return fetchWithRetry(`${rootPath}/api/sessions/invalidToken?items=*`, {
+    credentials: 'same-origin',
+    headers: new Headers({ 'Content-Type': 'application/json' }),
+    method: 'GET',
+  }, 1)
+}
+
 let sessionPromise: Promise<void | SessionResponse>
 if (bindingChanged) {
-  sessionPromise = createSessionRequest(false)
-    .then(() => createSessionRequest(true))
-    .catch(err => console.log('Error while loading session with error: ', err));
+  sessionPromise = clearSession()
+    .then(createInitialSessionRequest)
+    .catch((err: any) => console.log('Error while loading session with error: ', err));
 } else {
-  sessionPromise = createSessionRequest(true)
-    .catch(err => console.log('Error while loading session with error: ', err));
+  sessionPromise = createInitialSessionRequest()
+    .catch((err: any) => console.log('Error while loading session with error: ', err));
 }
 
 (window as any).__RENDER_7_SESSION__ = (window as any).__RENDER_8_SESSION__ = {
