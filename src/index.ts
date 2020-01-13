@@ -108,14 +108,16 @@ const clearSession = () => {
   }, 1)
 }
 
+const onError = (err: any) => console.log('Error while loading session with error: ', err)
+
 let sessionPromise: Promise<void | SessionResponse>
 if (bindingChanged) {
   sessionPromise = clearSession()
     .then(createInitialSessionRequest)
-    .catch((err: any) => console.log('Error while loading session with error: ', err));
+    .catch(onError);
 } else {
   sessionPromise = createInitialSessionRequest()
-    .catch((err: any) => console.log('Error while loading session with error: ', err));
+    .catch(onError);
 }
 
 (window as any).__RENDER_7_SESSION__ = (window as any).__RENDER_8_SESSION__ = {
