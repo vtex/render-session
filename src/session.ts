@@ -8,10 +8,17 @@ export class Session {
   constructor(path: string) {
     this.path = path
   }
+  
+  public clearSession = () => fetchWithRetry(`${this.path}/api/sessions/invalidToken?items=*`, {
+    credentials: 'same-origin',
+    headers: new Headers({ 'Content-Type': 'application/json' }),
+    method: 'GET',
+  }, 1)
+
 
   public setSession = (querystring: string = '', data?: any) => {
-  if (data && data[IMPERSONATED_KEY]) {
-    const param = data[IMPERSONATED_KEY]
+    if (data && data[IMPERSONATED_KEY]) {
+      const param = data[IMPERSONATED_KEY]
     if (param && param.value) {
       setCookie(IMPERSONATED_KEY, param.value, 1)
     } else {
