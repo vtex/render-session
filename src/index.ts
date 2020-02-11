@@ -31,6 +31,7 @@ declare global {
       binding?: {
         id: string
       },
+      bindingChanged?: boolean,
       culture: {
         availableLocales: string[]
       }
@@ -39,6 +40,7 @@ declare global {
   }
 }
 
+const bindingChanged = window.__RUNTIME__ && window.__RUNTIME__.bindingChanged
 const bindingId = window.__RUNTIME__ && window.__RUNTIME__.binding && window.__RUNTIME__.binding.id
 const supportedLocales = window.__RUNTIME__ && window.__RUNTIME__.culture && window.__RUNTIME__.culture.availableLocales || []
 const rootPath = window.__RUNTIME__ && window.__RUNTIME__.rootPath || ''
@@ -124,18 +126,25 @@ const clearSession = () => {
 
 const onError = (err: any) => console.log('Error while loading session with error: ', err)
 
-const sessionPromise = createInitialSessionRequest()
-  .then(result => {
-    if (!result.response ||
-      !result.response.namespaces.account.bindingId ||
-      result.response.namespaces.account.bindingId.value === bindingId
-    ) {
-      return result
-    }
+let sessionPromise: Promise<void | SessionResponse>
+if (bindingChanged) {
+  sessionPromise = clearSession()
+    .then(createInitialSessionRequest)
+    .catch(onError)
+} else {
+  sessionPromise = createInitialSessionRequest()
+    .then(result => {
+      if (!result.response ||
+        !result.response.namespaces.account.bindingId ||
+        result.response.namespaces.account.bindingId.value === bindingId
+      ) {
+        return result
+      }
 
-    return clearSession().then(createInitialSessionRequest)
-  })
-  .catch(onError);
+      return clearSession().then(createInitialSessionRequest)
+    })
+    .catch(onError)
+}
 
 (window as any).__RENDER_7_SESSION__ = (window as any).__RENDER_8_SESSION__ = {
   patchSession,
