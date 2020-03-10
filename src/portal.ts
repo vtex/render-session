@@ -29,15 +29,15 @@ class PortalSession extends Session {
   }
 }
 
+const removeTrailingSlash = (path: string) => path[path.length - 1] === '/' ? path.slice(0, path.length - 1) : path
+
 export default () => {
   const HOST_URL = window.location.origin
   window.vtexjs = window.vtexjs || {}
-  window.vtexjs.session = new PortalSession(HOST_URL)
+  window.vtexjs.session = new PortalSession(removeTrailingSlash(HOST_URL))
 
-  document.addEventListener('DOMContentLoaded', () => {
+  window.vtexjs.session.setSession().then(() => window.dispatchEvent(new Event('session.done')))
+  document.addEventListener('authenticatedUser.vtexid', () => {
     window.vtexjs.session.setSession().then(() => window.dispatchEvent(new Event('session.done')))
-    document.addEventListener('authenticatedUser.vtexid', () => {
-      window.vtexjs.session.setSession().then(() => window.dispatchEvent(new Event('session.done')))
-    })
   })
 }
