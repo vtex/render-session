@@ -81,8 +81,6 @@ const patchSession = (data?: any) => fetchWithRetry(`${rootPath}/api/sessions${w
   method: 'PATCH',
 }).catch(err => console.log('Error while patching session with error: ', err))
 
-const items = `${window.location.search ? '&' : '?'}items=${ITEMS.join(',')}`
-
 const supportedLocalesSearch = supportedLocales.length > 0
   ? `&supportedLocales=${supportedLocales.join(',')}`
   : ''
@@ -92,6 +90,7 @@ const bindingIdSearch = bindingId
   : ''
 
 const createInitialSessionRequest = () => {
+  const items = `${window.location.search ? '&' : '?'}items=${ITEMS.join(',')}`
   return fetchWithRetry(`${rootPath}/api/sessions${window.location.search}${items}${supportedLocalesSearch}${bindingIdSearch}`, {
     body: '{}',
     credentials: 'same-origin',
