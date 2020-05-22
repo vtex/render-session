@@ -74,7 +74,9 @@ const fetchWithRetry = (url: string, init: RequestInit, maxRetries: number = 3) 
   return callFetch()
 }
 
-const patchSession = (data?: any) => fetchWithRetry(`${rootPath}/api/sessions${window.location.search}`, {
+const rootPathPrefix = rootPath === '/' ? '' : rootPath
+
+const patchSession = (data?: any) => fetchWithRetry(`${rootPathPrefix}/api/sessions${window.location.search}`, {
   body: data ? JSON.stringify(data) : '{}',
   credentials: 'same-origin',
   headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -91,7 +93,7 @@ const bindingIdSearch = bindingId
 
 const createInitialSessionRequest = () => {
   const items = `${window.location.search ? '&' : '?'}items=${ITEMS.join(',')}`
-  return fetchWithRetry(`${rootPath}/api/sessions${window.location.search}${items}${supportedLocalesSearch}${bindingIdSearch}`, {
+  return fetchWithRetry(`${rootPathPrefix}/api/sessions${window.location.search}${items}${supportedLocalesSearch}${bindingIdSearch}`, {
     body: '{}',
     credentials: 'same-origin',
     headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -100,7 +102,7 @@ const createInitialSessionRequest = () => {
 }
 
 const clearSession = () => {
-  return fetchWithRetry(`${rootPath}/api/sessions/invalidToken?items=*`, {
+  return fetchWithRetry(`${rootPathPrefix}/api/sessions/invalidToken?items=*`, {
     credentials: 'same-origin',
     headers: new Headers({ 'Content-Type': 'application/json' }),
     method: 'GET',
