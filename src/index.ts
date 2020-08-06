@@ -1,4 +1,5 @@
 import { ITEMS } from './constants'
+import { renew } from './refreshtoken'
 
 interface SessionResponse {
   response: Response | null,
@@ -110,12 +111,15 @@ const clearSession = () => {
 const onError = (err: any) => console.log('Error while loading session with error: ', err)
 
 let sessionPromise: Promise<void | SessionResponse>
+
 if (bindingChanged) {
-  sessionPromise = clearSession()
+  sessionPromise = renew()
+    .then(clearSession)
     .then(createInitialSessionRequest)
     .catch(onError);
 } else {
-  sessionPromise = createInitialSessionRequest()
+  sessionPromise = renew()
+    .then(createInitialSessionRequest)
     .catch(onError);
 }
 
