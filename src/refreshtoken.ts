@@ -41,11 +41,6 @@ export const renew = async () => {
 
   try {
     const now = new Date()
-    const item = localStorage.getItem(LOCAL_STORAGE_KEY)
-    if (item) {
-      const curr = JSON.parse(item)
-      if (curr && now < new Date(curr.refreshAfter)) return
-    }
 
     const curr = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || 'null')
     if (curr && now < new Date(curr.refreshAfter)) return
