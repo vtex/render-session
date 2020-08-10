@@ -37,7 +37,7 @@ const fetchWithTimeout = (url: string, options: RequestInit | undefined, timeout
 
 export const renew = async () => {
   const localStorage = window.localStorage
-  if (!window || !localStorage) return
+  if (!localStorage) return
 
   try {
     const now = new Date()
