@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.8.2] - 2020-08-12
+### Added
+- Calls VTEX ID refresh token route before Sessions.
+
 ## [1.8.1] - 2020-04-01
 ### Fixed
 - Fix bad session URL when window.location.search changes.
