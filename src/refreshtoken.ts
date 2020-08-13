@@ -18,11 +18,12 @@ const setItem = (status: string, refreshAfter: Date) =>
     JSON.stringify({ status, refreshAfter })
   )
 
+const removeKey = () => {
+  localStorage.removeItem(LOCAL_STORAGE_KEY)
+}
+
 const setError = () =>
   setItem(STATUS.ERROR, new Date(new Date().getTime() + TTL_30_MIN))
-
-const setInvalidSession = () =>
-  setItem(STATUS.INVALID_SESSION, new Date(new Date().getTime() + TTL_12_HOURS))
 
 const fetchWithTimeout = (url: string, options: RequestInit | undefined, timeout: number): Promise<Response> => {
   return new Promise((resolve, reject) => {
@@ -35,10 +36,16 @@ export const tryInsertFirstRenewKey = (sessionResponse: SessionResponse) => {
   const localStorage = window.localStorage
   if (!localStorage) return
 
-  const isAuthenticated = (sessionResponse.response as SessionResponseData).namespaces.profile.isAuthenticated.value
+  const isAuthenticated = (sessionResponse.response as SessionResponseData).namespaces.profile.isAuthenticated.value === "true"
   const keyExists = localStorage.getItem(LOCAL_STORAGE_KEY)
-  if (isAuthenticated && !keyExists) {
-    setItem(STATUS.SUCCESS, new Date(new Date().getTime() + TTL_12_HOURS))
+
+  if (isAuthenticated) {
+    if (!keyExists) {
+      setItem(STATUS.SUCCESS, new Date(new Date().getTime() + TTL_12_HOURS))
+    }
+  }
+  else if (keyExists) {
+    removeKey()
   }
   return sessionResponse
 }
@@ -72,7 +79,7 @@ export const tryRefreshTokenRenew = async () => {
     const status = data.status.toLowerCase()
 
     if (status === STATUS.INVALID_SESSION) {
-      setInvalidSession()
+      removeKey()
       return
     }
 

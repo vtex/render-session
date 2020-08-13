@@ -22,7 +22,7 @@ export interface SessionResponseData {
   namespaces: {
     profile: {
       isAuthenticated: {
-        value: boolean
+        value: string
       }
     }
   }
