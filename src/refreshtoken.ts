@@ -1,8 +1,4 @@
-interface RefreshTokenRenewResponse {
-  status: string,
-  userId: string | null,
-  refreshAfter: string | null,
-}
+import { SessionResponse, SessionResponseData, RefreshTokenRenewResponse } from './interfaces'
 
 const REFRESH_TOKEN_API = '/api/vtexid/refreshtoken/webstore'
 const LOCAL_STORAGE_KEY = 'vid_rt_webstore'
@@ -35,7 +31,19 @@ const fetchWithTimeout = (url: string, options: RequestInit | undefined, timeout
   })
 }
 
-export const renew = async () => {
+export const tryInsertFirstRenewKey = (sessionResponse: SessionResponse) => {
+  const localStorage = window.localStorage
+  if (!localStorage) return
+
+  const isAuthenticated = (sessionResponse.response as SessionResponseData).namespaces.profile.isAuthenticated.value
+  const keyExists = localStorage.getItem(LOCAL_STORAGE_KEY)
+  if (isAuthenticated && !keyExists) {
+    setItem(STATUS.SUCCESS, new Date(new Date().getTime() + TTL_12_HOURS))
+  }
+  return sessionResponse
+}
+
+export const tryRefreshTokenRenew = async () => {
   const localStorage = window.localStorage
   if (!localStorage) return
 
@@ -43,7 +51,7 @@ export const renew = async () => {
     const now = new Date()
 
     const curr = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || 'null')
-    if (curr && now < new Date(curr.refreshAfter)) return
+    if (!curr || now < new Date(curr.refreshAfter)) return
 
     const response = await fetchWithTimeout(REFRESH_TOKEN_API, {
       method: 'POST',
