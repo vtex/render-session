@@ -33,21 +33,25 @@ const fetchWithTimeout = (url: string, options: RequestInit | undefined, timeout
 }
 
 export const tryInsertFirstRenewKey = (sessionResponse: SessionResponse) => {
-  const localStorage = window.localStorage
-  if (!localStorage) return
-
-  const isAuthenticated = (sessionResponse.response as SessionResponseData).namespaces.profile.isAuthenticated.value === "true"
-  const keyExists = localStorage.getItem(LOCAL_STORAGE_KEY)
-
-  if (isAuthenticated) {
-    if (!keyExists) {
-      setItem(STATUS.SUCCESS, new Date(new Date().getTime() + TTL_12_HOURS))
+  try {
+    const localStorage = window.localStorage
+    if (!localStorage) return
+  
+    const isAuthenticated = (sessionResponse.response as SessionResponseData).namespaces.profile.isAuthenticated.value === "true"
+    const keyExists = localStorage.getItem(LOCAL_STORAGE_KEY)
+  
+    if (isAuthenticated) {
+      if (!keyExists) {
+        setItem(STATUS.SUCCESS, new Date(new Date().getTime() + TTL_12_HOURS))
+      }
+    }
+    else if (keyExists) {
+      removeKey()
     }
   }
-  else if (keyExists) {
-    removeKey()
+  finally {
+    return sessionResponse
   }
-  return sessionResponse
 }
 
 export const tryRefreshTokenRenew = async () => {
