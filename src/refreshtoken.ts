@@ -10,7 +10,7 @@ const STATUS = {
 const TTL_30_MIN = 30 * 60 * 1000
 const TTL_12_HOURS = 12 * 60 * 60 * 1000
 const APPNAME = 'render-session'
-const TIMEOUT = 5000
+const TIMEOUT = 2000
 
 const setItem = (status: string, refreshAfter: Date) =>
   localStorage.setItem(
@@ -37,7 +37,8 @@ export const tryInsertFirstRenewKey = (sessionResponse: SessionResponse) => {
     const localStorage = window.localStorage
     if (!localStorage) return
   
-    const isAuthenticated = (sessionResponse.response as SessionResponseData).namespaces.profile.isAuthenticated.value === "true"
+    const profile = (sessionResponse.response as SessionResponseData).namespaces.profile;
+    const isAuthenticated = profile && profile.isAuthenticated.value === "true"
     const keyExists = localStorage.getItem(LOCAL_STORAGE_KEY)
   
     if (isAuthenticated) {
