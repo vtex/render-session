@@ -41,12 +41,10 @@ export const tryInsertFirstRenewKey = (sessionResponse: SessionResponse) => {
     const isAuthenticated = profile && profile.isAuthenticated.value === "true"
     const keyExists = localStorage.getItem(LOCAL_STORAGE_KEY)
   
-    if (isAuthenticated) {
-      if (!keyExists) {
-        setItem(STATUS.SUCCESS, new Date(new Date().getTime() + TTL_12_HOURS))
-      }
+    if (isAuthenticated && !keyExists) {
+      setItem(STATUS.SUCCESS, new Date(new Date().getTime() + TTL_12_HOURS))
     }
-    else if (keyExists) {
+    if (!isAuthenticated && keyExists) {
       removeKey()
     }
   }
