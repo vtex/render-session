@@ -1,5 +1,5 @@
 import { ITEMS } from './constants'
-import { tryRefreshTokenRenew, tryInsertFirstRenewKey } from './refreshtoken'
+import { tryRefreshTokenRenew, setFirstOrRemoveRenewKey } from './refreshtoken'
 import { SessionResponse } from './interfaces'
 
 const delay = (ms: number): Promise<void> => {
@@ -97,12 +97,12 @@ if (bindingChanged) {
   sessionPromise = tryRefreshTokenRenew()
     .then(clearSession)
     .then(createInitialSessionRequest)
-    .then(tryInsertFirstRenewKey)
+    .then(setFirstOrRemoveRenewKey)
     .catch(onError);
 } else {
   sessionPromise = tryRefreshTokenRenew()
     .then(createInitialSessionRequest)
-    .then(tryInsertFirstRenewKey)
+    .then(setFirstOrRemoveRenewKey)
     .catch(onError);
 }
 

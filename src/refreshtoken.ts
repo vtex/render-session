@@ -32,7 +32,7 @@ const fetchWithTimeout = (url: string, options: RequestInit | undefined, timeout
   })
 }
 
-export const tryInsertFirstRenewKey = (sessionResponse: SessionResponse) => {
+export const setFirstOrRemoveRenewKey = (sessionResponse: SessionResponse) => {
   try {
     const localStorage = window.localStorage
     if (!localStorage) return
