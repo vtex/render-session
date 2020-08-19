@@ -1,27 +1,9 @@
 import { ITEMS } from './constants'
-
-interface SessionResponse {
-  response: Response | null,
-  error: any,
-}
+import { tryRefreshTokenRenew, setFirstOrRemoveRenewKey } from './refreshtoken'
+import { SessionResponse } from './interfaces'
 
 const delay = (ms: number): Promise<void> => {
   return new Promise(resolve => setTimeout(resolve, ms))
-}
-
-declare global {
-  interface Window {
-    __RUNTIME__: {
-      binding?: {
-        id: string
-      },
-      bindingChanged?: boolean,
-      culture: {
-        availableLocales: string[]
-      }
-      rootPath?: string
-    }
-  }
 }
 
 const bindingChanged = window.__RUNTIME__ && window.__RUNTIME__.bindingChanged
@@ -110,12 +92,17 @@ const clearSession = () => {
 const onError = (err: any) => console.log('Error while loading session with error: ', err)
 
 let sessionPromise: Promise<void | SessionResponse>
+
 if (bindingChanged) {
-  sessionPromise = clearSession()
+  sessionPromise = tryRefreshTokenRenew()
+    .then(clearSession)
     .then(createInitialSessionRequest)
+    .then(setFirstOrRemoveRenewKey)
     .catch(onError);
 } else {
-  sessionPromise = createInitialSessionRequest()
+  sessionPromise = tryRefreshTokenRenew()
+    .then(createInitialSessionRequest)
+    .then(setFirstOrRemoveRenewKey)
     .catch(onError);
 }
 
