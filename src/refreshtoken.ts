@@ -1,6 +1,7 @@
 import { SessionResponse, SessionResponseData, RefreshTokenRenewResponse } from './interfaces'
 
-const REFRESH_TOKEN_API = '/api/vtexid/refreshtoken/webstore'
+const rootPath = window.__RUNTIME__ && window.__RUNTIME__.rootPath || ''
+const REFRESH_TOKEN_API = `${rootPath}/api/vtexid/refreshtoken/webstore`
 const LOCAL_STORAGE_KEY = 'vid_rt_webstore'
 const STATUS = {
   SUCCESS: 'success',
