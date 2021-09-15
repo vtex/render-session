@@ -45,6 +45,9 @@ module.exports = (env, {mode}) => ({
       aggregateTimeout: 300,
       poll: 500,
     },
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    }
   },
 
   devtool: mode === "production" ? undefined: 'inline-source-map',

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `gclid` to `ITEMS` constant to support this query string
+
+### Fixed
+- CORS errors during development mode
 
 ## [1.9.2] - 2020-12-23
 - Uses rootPath when calling VTEX ID
