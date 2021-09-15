@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- `gclid` to `ITEMS` constant to support this query string
+- `gclid` to `ITEMS` constant to add the query string to the session
 
 ### Fixed
 - CORS errors during development mode
