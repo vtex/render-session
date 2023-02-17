@@ -26,4 +26,5 @@ export const ITEMS = [
   "public.utmi_cp",
   "public.utmi_p",
   "public.utmi_pc",
+  "public.shippingOption",
 ];
